@@ -16,15 +16,15 @@ db_config = {
 
 @app.route('/veri', methods=['GET'])
 def get_data():
-    veri_tipi = request.args.get('veri_tipi')
-    start_date = request.args.get('start')
-    end_date = request.args.get('end')
-
-    if not veri_tipi or not start_date or not end_date:
-        return jsonify({'error': 'Eksik parametreler'}), 400
-    
-    start_date = start_date.replace('T', ' ')
-    end_date = end_date.replace('T', ' ')
+    try:
+        return jsonify([
+            {"tarih": "2025-07-01", "saat": "12:00:00", "deger": 35.2},
+            {"tarih": "2025-07-01", "saat": "13:00:00", "deger": 36.1},
+            {"tarih": "2025-07-01", "saat": "14:00:00", "deger": 34.9}
+        ])
+    except Exception as e:
+        print(f"[HATA] {e}")
+        return jsonify({'error': 'Sunucu hatası'}), 500
 
     try:
         connection = pymysql.connect(**db_config)
