@@ -53,24 +53,13 @@ def get_data():
 
 
 @app.route('/ozet', methods=['GET'])  # BU satır ve altı GET_DATA DIŞINDA olmalı
+@app.route('/ozet', methods=['GET'])
 def get_summary():
     try:
-        connection = pymysql.connect(**db_config)
-        with connection.cursor() as cursor:
-            sql = """
-                SELECT veri_tipi, deger
-                FROM (
-                    SELECT veri_tipi, deger, CONCAT(tarih, ' ', saat) AS tarih_saat
-                    FROM veriler
-                    ORDER BY CONCAT(tarih, ' ', saat) DESC
-                ) AS sub
-                GROUP BY veri_tipi
-            """
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            print("[OZET SONUCU]", result)
-        connection.close()
-        return jsonify(result)
+        return jsonify([
+            {"veri_tipi": "batarya_isi", "deger": 35.2},
+            {"veri_tipi": "hiz", "deger": 42.5}
+        ])
     except Exception as e:
         print(f"[HATA] {e}")
         return jsonify({'error': 'Sunucu hatası'}), 500
