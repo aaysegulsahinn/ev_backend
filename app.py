@@ -4,17 +4,18 @@ import pymysql
 import _mysql_connector
 import psycopg2
 import psycopg2.extras
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 # Veritabanı bağlantı bilgileri
 db_config = {
-    'host': 'dpg-d1n3ng6mcj7s73bjqhog-a',
-    'dbname': 'ev_postgres',
-    'user': 'ev_postgres_user',
-    'password': 'crJGKAzxdrCejo66A4cXry2kMl6WFrFZ', 
-    'port': 5432
+    'host': os.environ.get('DB_HOST'),
+    'dbname': os.environ.get('DB_NAME'),
+    'user': os.environ.get('DB_USER'),
+    'password': os.environ.get('DB_PASSWORD'),
+    'port': int(os.environ.get('DB_PORT', 5432))
 }
 
 @app.route('/veri', methods=['GET'])
