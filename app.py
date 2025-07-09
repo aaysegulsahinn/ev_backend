@@ -1,30 +1,26 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql
+import _mysql_connector
 
 app = Flask(__name__)
 CORS(app)
 
 # Veritabanı bağlantı bilgileri
 db_config = {
-    'host': 'localhost',
+    'host': 'mysql.railway.internal',
     'user': 'root',
-    'password': 'YeniSifre123!',  # Kendi root şifreni buraya yaz
-    'database': 'elektrikli_arac',
+    'password': 'bLBOWOpLiqcepkZwChbxHlSpAkSUBoJh',
+    'database': 'railway',
+    'port': 3306,
     'cursorclass': pymysql.cursors.DictCursor
 }
 
 @app.route('/veri', methods=['GET'])
 def get_data():
-    try:
-        return jsonify([
-            {"tarih": "2025-07-01", "saat": "12:00:00", "deger": 35.2},
-            {"tarih": "2025-07-01", "saat": "13:00:00", "deger": 36.1},
-            {"tarih": "2025-07-01", "saat": "14:00:00", "deger": 34.9}
-        ])
-    except Exception as e:
-        print(f"[HATA] {e}")
-        return jsonify({'error': 'Sunucu hatası'}), 500
+    veri_tipi = request.args.get('veri_tipi')
+    start_date = request.args.get('start')
+    end_date = request.args.get('end')
 
     try:
         connection = pymysql.connect(**db_config)
