@@ -8,7 +8,7 @@ CORS(app)
 
 # Veritabanı bağlantı bilgileri
 db_config = {
-    'host': 'mysql.railway.internal',
+    'host': 'gondola.proxy.rlwy.net',
     'user': 'root',
     'password': 'bLBOWOpLiqcepkZwChbxHlSpAkSUBoJh',
     'database': 'railway',
