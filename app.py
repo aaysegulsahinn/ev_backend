@@ -2,47 +2,48 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql
 import _mysql_connector
+import psycopg2
+import psycopg2.extras
 
 app = Flask(__name__)
 CORS(app)
 
 # Veritabanı bağlantı bilgileri
 db_config = {
-    'host': 'gondola.proxy.rlwy.net',
-    'user': 'root',
-    'password': 'bLBOWOpLiqcepkZwChbxHlSpAkSUBoJh',
-    'database': 'railway',
-    'port': 3306,
-    'cursorclass': pymysql.cursors.DictCursor
+    'host': 'dpg-d1n3ng6mcj7s73bjqhog-a',
+    'dbname': 'ev_postgres',
+    'user': 'ev_postgres_user',
+    'password': 'crJGKAzxdrCejo66A4cXry2kMl6WFrFZ', 
+    'port': 5432
 }
 
 @app.route('/veri', methods=['GET'])
 def get_data():
-    veri_tipi = request.args.get('veri_tipi')
-    start_date = request.args.get('start')
-    end_date = request.args.get('end')
-
     try:
-        connection = pymysql.connect(**db_config)
-        with connection.cursor() as cursor:
-            sql = """
-                SELECT tarih, saat, deger
-                FROM veriler
-                WHERE veri_tipi = %s
-                AND CONCAT(tarih, ' ', saat) BETWEEN %s AND %s
-                ORDER BY tarih, saat
-            """
-            cursor.execute(sql, (veri_tipi, start_date, end_date))
-            result = cursor.fetchall()
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-            for row in result:
-                if not isinstance(row['saat'], str):
-                    row['saat'] = str(row['saat'])
-                if not isinstance(row['tarih'], str):
-                    row['tarih'] = row['tarih'].strftime('%Y-%m-%d')
+        sql = """
+            SELECT tarih, saat, deger
+            FROM veriler
+            WHERE veri_tipi = 'batarya_isi'
+            ORDER BY tarih, saat
+        """
+        cur.execute(sql)
+        rows = cur.fetchall()
 
-        connection.close()
+        result = []
+        for row in rows:
+            result.append({
+                'tarih': row['tarih'].strftime('%Y-%m-%d'),
+                'saat': str(row['saat']),
+                'deger': row['deger']
+            })
+
+        cur.close()
+        conn.close()
         return jsonify(result)
+
     except Exception as e:
         print(f"[HATA] {e}")
         return jsonify({'error': 'Sunucu hatası'}), 500
