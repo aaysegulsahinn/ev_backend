@@ -47,6 +47,28 @@ def get_data():
     except Exception as e:
         print(f"[HATA] {e}")
         return jsonify({'error': 'Sunucu hatası'}), 500
+    
+@app.route('/veri-ekle', methods=['GET'])
+def veri_ekle():
+    try:
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor()
+
+        cur.execute("""
+            INSERT INTO veriler (veri_tipi, tarih, saat, deger) VALUES
+            ('batarya_isi', '2025-07-01', '10:00:00', 35.2),
+            ('batteryVoltage', '2025-07-01', '10:01:00', 13.5),
+            ('cellAvgVoltage', '2025-07-01', '10:02:00', 3200.0),
+            ('chargingCurrent', '2025-07-01', '10:03:00', 70.0),
+            ('hiz', '2025-07-01', '10:04:00', 40.0)
+        """)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "✅ Veriler başarıyla eklendi"})
+    except Exception as e:
+        print(f"[HATA] {e}")
+        return jsonify({'error': 'Veri ekleme hatası'}), 500
 
 
 @app.route('/ozet', methods=['GET'])  # BU satır ve altı GET_DATA DIŞINDA olmalı
