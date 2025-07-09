@@ -24,10 +24,10 @@ def get_data():
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         sql = """
-            SELECT tarih, saat, deger
+            SELECT tarih, deger
             FROM veriler
             WHERE veri_tipi = 'batarya_isi'
-            ORDER BY tarih, saat
+            ORDER BY tarih
         """
         cur.execute(sql)
         rows = cur.fetchall()
@@ -36,7 +36,7 @@ def get_data():
         for row in rows:
             result.append({
                 'tarih': row['tarih'].strftime('%Y-%m-%d'),
-                'saat': str(row['saat']),
+                'saat': row['tarih'].strftime('%H:%M:%S'),
                 'deger': row['deger']
             })
 
@@ -55,12 +55,12 @@ def veri_ekle():
         cur = conn.cursor()
 
         cur.execute("""
-            INSERT INTO veriler (veri_tipi, tarih, saat, deger) VALUES
-            ('batarya_isi', '2025-07-01', '10:00:00', 35.2),
-            ('batteryVoltage', '2025-07-01', '10:01:00', 13.5),
-            ('cellAvgVoltage', '2025-07-01', '10:02:00', 3200.0),
-            ('chargingCurrent', '2025-07-01', '10:03:00', 70.0),
-            ('hiz', '2025-07-01', '10:04:00', 40.0)
+            INSERT INTO veriler (veri_tipi, deger, tarih) VALUES
+            ('batarya_isi', 35.2, '2025-07-01 10:00:00'),
+            ('batteryVoltage', 13.5, '2025-07-01 10:01:00'),
+            ('cellAvgVoltage', 3200.0, '2025-07-01 10:02:00'),
+            ('chargingCurrent', 70.0, '2025-07-01 10:03:00'),
+            ('hiz', 40.0, '2025-07-01 10:04:00')
         """)
         conn.commit()
         cur.close()
