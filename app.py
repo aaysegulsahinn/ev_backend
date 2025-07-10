@@ -93,11 +93,11 @@ def test_baglanti():
     try:
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
-        cur.execute('SELECT 1;')
+        cur.execute('SELECT NOW();')
         result = cur.fetchone()
         cur.close()
         conn.close()
-        return jsonify({"status": "✅ Veritabanına başarıyla bağlanıldı", "sonuc": result[0]})
+        return jsonify({"status": "✅ Veritabanına bağlanıldı", "zaman": result[0]})
     except Exception as e:
         print(f"[TEST HATASI] {e}")
         return jsonify({'error': f'❌ Veritabanı bağlantı hatası: {str(e)}'}), 500
