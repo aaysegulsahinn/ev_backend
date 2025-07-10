@@ -21,16 +21,20 @@ db_config = {
 @app.route('/veri', methods=['GET'])
 def get_data():
     try:
+        veri_tipi = request.args.get('veri_tipi')
+        start = request.args.get('start')
+        end = request.args.get('end')
+
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         sql = """
             SELECT tarih, deger
             FROM veriler
-            WHERE veri_tipi = 'batarya_isi'
+            WHERE veri_tipi = %s AND tarih BETWEEN %s AND %s
             ORDER BY tarih
         """
-        cur.execute(sql)
+        cur.execute(sql, (veri_tipi, start, end))
         rows = cur.fetchall()
 
         result = []
