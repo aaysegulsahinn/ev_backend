@@ -42,7 +42,7 @@ def get_data():
             result.append({
                 'tarih': row['tarih'].strftime('%Y-%m-%d'),
                 'saat': row['tarih'].strftime('%H:%M:%S'),
-                'deger': row['deger']
+                'deger': float(row['deger'])
             })
 
         cur.close()
