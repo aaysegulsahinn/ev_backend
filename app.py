@@ -87,6 +87,20 @@ def get_summary():
     except Exception as e:
         print(f"[HATA] {e}")
         return jsonify({'error': 'Sunucu hatası'}), 500
+    
+@app.route('/test-baglanti', methods=['GET'])
+def test_baglanti():
+    try:
+        conn = psycopg2.connect(**db_config)
+        cur = conn.cursor()
+        cur.execute('SELECT 1;')
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "✅ Veritabanına başarıyla bağlanıldı", "sonuc": result[0]})
+    except Exception as e:
+        print(f"[TEST HATASI] {e}")
+        return jsonify({'error': f'❌ Veritabanı bağlantı hatası: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
